@@ -3,9 +3,7 @@ import argparse
 import cv2
 import numpy as np
 
-# =========================
 #  Core helpers
-# =========================
 def ensure_dir(path):
     if path:
         os.makedirs(path, exist_ok=True)
@@ -19,9 +17,7 @@ def bgr2gray(bgr):
 def bgr2hsv(bgr):
     return cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
 
-# =========================
 #  Pensum: Thresholding (segmentering)
-# =========================
 def apple_mask_from_hsv_s(bgr):
     hsv = bgr2hsv(bgr)
     _, S, _ = cv2.split(hsv)
@@ -31,9 +27,8 @@ def apple_mask_from_hsv_s(bgr):
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, k, iterations=1)
     return mask
 
-# =========================
+
 #  Pensum: Contours + filtering
-# =========================
 def find_contours(bin_mask):
     contours, _ = cv2.findContours(bin_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     return contours
@@ -64,9 +59,7 @@ def pick_two_apples(contours, img_area):
     cand.sort(key=lambda t: t[2][0])  # venstre->højre
     return cand
 
-# =========================
 #  Production: Defekter (HSV + gradient)
-# =========================
 def inner_mask(m, k=15):
     return cv2.erode(m, np.ones((k, k), np.uint8), iterations=1)
 
@@ -106,9 +99,7 @@ def relative_rule(info):
     info[r]["label"] = "RÅDDENT"
     info[f]["label"] = "FRISK"
 
-# =========================
 #  Pensum demo: Thresholds + Edges + Blobs (analysis)
-# =========================
 def threshold_compare(gray):
     blur = cv2.GaussianBlur(gray, (13, 13), 0)
     th_mean = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 41, 17)
@@ -148,9 +139,7 @@ def save_debug(debug_dir, base, imgs):
     for name, img in imgs.items():
         cv2.imwrite(os.path.join(debug_dir, f"{base}_{name}.png"), img)
 
-# =========================
 #  Draw result
-# =========================
 def draw_overlay(bgr, info):
     out = bgr.copy()
     red = np.zeros_like(out); red[:, :, 2] = 255
@@ -167,9 +156,7 @@ def draw_overlay(bgr, info):
         cv2.putText(out, txt, (x, max(25, y - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.62, (255, 255, 255), 2, cv2.LINE_AA)
     return out
 
-# =========================
 #  Main
-# =========================
 def process_image(path, save_dir, debug_dir, show, analysis):
     bgr = read_bgr(path)
     if bgr is None:
@@ -219,21 +206,33 @@ def process_image(path, save_dir, debug_dir, show, analysis):
 
 def main():
     ap = argparse.ArgumentParser(description="Detektion af rådne æbler (lærer-stil + portefølje)")
-    ap.add_argument("--input", required=True, help="Fil eller mappe med billeder")
+    ap.add_argument("--input", default="images", help="Fil eller mappe med billeder (default: images)")
     ap.add_argument("--save", default="output")
     ap.add_argument("--debug", default="debug")
-    ap.add_argument("--no-show", action="store_true")
+    ap.add_argument("--show", action="store_true", help="Vis billeder på skærmen")
     ap.add_argument("--analysis", action="store_true")
-    a = ap.parse_args()
+    args = ap.parse_args()
 
-    show = not a.no_show
-    if os.path.isdir(a.input):
+    show = args.show
+
+    if os.path.isdir(args.input):
         exts = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
-        files = sorted(os.path.join(a.input, f) for f in os.listdir(a.input) if f.lower().endswith(exts))
+        files = sorted(
+            os.path.join(args.input, f)
+            for f in os.listdir(args.input)
+            if f.lower().endswith(exts)
+        )
+
+        if not files:
+            print("Ingen billeder fundet i:", args.input)
+            return
+
         for p in files:
-            process_image(p, a.save, a.debug, show, a.analysis)
-    else:
-        process_image(a.input, a.save, a.debug, show, a.analysis)
+            process_image(p, args.save, args.debug, show, args.analysis)
+        return  # <- vigtig: stop her, så vi ikke prøver at læse mappen som billede
+
+    # ellers: single image
+    process_image(args.input, args.save, args.debug, show, args.analysis)
 
 if __name__ == "__main__":
     main()
