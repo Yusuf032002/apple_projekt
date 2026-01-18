@@ -1,10 +1,10 @@
-\# 🍎 Detektion af rådne æbler – Computer Vision
+\# Detektion af rådne �bler – Computer Vision
 
 
 
 Dette projekt anvender klassiske computer vision-teknikker til at identificere og adskille
 
-\*\*friske\*\* og \*\*rådne æbler\*\* ud fra billeder.
+\*\*friske\*\* og \*\*rådne �bler\*\* ud fra billeder.
 
 
 
@@ -16,9 +16,9 @@ Projektet er lavet som en del af computer vision-undervisningen og følger pensu
 
 
 
-\## 🎯 Formål
+\## Formål
 
-\- Automatisk detektion af rådne æbler
+\- Automatisk detektion af rådne �bler
 
 \- Reducere manuel sortering
 
@@ -30,7 +30,7 @@ Projektet er lavet som en del af computer vision-undervisningen og følger pensu
 
 
 
-\## 🧠 Anvendte teknikker (pensum)
+\## Anvendte teknikker (pensum)
 
 Projektet anvender følgende computer vision-metoder:
 
@@ -80,7 +80,7 @@ Projektet anvender følgende computer vision-metoder:
 
 
 
-\## ▶️ Sådan køres projektet
+\## �Sådan køres projektet
 
 
 
@@ -92,7 +92,7 @@ python detect\_rotten\_apples.py
 
 
 
-Vis billeder på skærmen
+Vis billeder på sk�rmen
 
 python detect\_rotten\_apples.py --show
 
@@ -122,11 +122,11 @@ apple\_projekt/
 
 └── README.md
 
-🧪 Output
+    Output
 
 
 
-Klassifikation af hvert æble som FRISK eller RÅDDENT
+Klassifikation af hvert �ble som FRISK eller RÅDDENT
 
 
 
@@ -138,7 +138,7 @@ Analysebilleder (threshold, edges, blobs) gemmes i debug/
 
 
 
-🛠 Krav
+Krav
 
 
 
@@ -154,9 +154,10 @@ NumPy
 
 
 
-Installer afhængigheder:
+Installer afh�ngigheder:
 
 pip install opencv-python numpy
+
 
 
 
